@@ -20,3 +20,52 @@
   <h2>Качи Prolog файл (.pl)</h2>
   <input type="file" id="fileInput" accept=".pl">
   <div id="output"></div>
+ 
+  <script>
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+     
+      const reader = new FileReader();
+     
+      reader.onload = function(e) {
+        const content = e.target.result;
+        const lines = content.split('\n');
+       
+        const facts = [];
+        const rules = [];
+        const comments = [];
+       
+        lines.forEach(line => {
+          const trimmed = line.trim();
+         
+          if (trimmed.startsWith('%')) {
+            comments.push(trimmed);
+          } else if (trimmed.includes(':-')) {
+            rules.push(trimmed);
+          } else if (trimmed && trimmed.endsWith('.')) {
+            facts.push(trimmed);
+          }
+        });
+       
+        const output = `
+🔎 Анализ на Prolog файл:
+-------------------------
+Факти (${facts.length}):
+${facts.join('\n')}
+
+Правила (${rules.length}):
+${rules.join('\n')}
+
+Коментари (${comments.length}):
+${comments.join('\n')}
+        `;
+       
+        document.getElementById('output').textContent = output;
+      };
+     
+      reader.readAsText(file);
+    });
+  </script>
+</body>
+</html>
